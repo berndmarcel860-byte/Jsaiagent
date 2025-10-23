@@ -1,0 +1,32 @@
+{
+  "name": "jsaiagent",
+  "version": "1.0.0",
+  "description": "KI-gestützter Telefonagent für Investment-Lead-Generierung",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "keywords": [
+    "asterisk",
+    "ai",
+    "openai",
+    "whisper",
+    "tts",
+    "voice-agent",
+    "investment"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "agi": "^2.0.0",
+    "asterisk-manager": "^0.1.16",
+    "openai": "^4.20.0",
+    "axios": "^1.6.2",
+    "form-data": "^4.0.0",
+    "dotenv": "^16.3.1",
+    "winston": "^3.11.0"
+  }
+}
