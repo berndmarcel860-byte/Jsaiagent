@@ -1,12 +1,11 @@
 {
   "name": "jsaiagent",
-  "version": "1.0.0",
-  "description": "KI-gestützter Telefonagent für Investment-Lead-Generierung",
-  "main": "src/index.js",
+  "version": "2.0.0",
+  "description": "KI-gestützter Telefonagent für Investment-Lead-Generierung - Python-Version für bessere Performance",
+  "main": "python/agi_handler.py",
   "type": "module",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "node --watch src/index.js",
+    "start": "echo 'Python-Version: Verwenden Sie python/agi_handler.py direkt in Asterisk AGI' && echo 'Siehe python/README.md für Details'",
     "test": "echo \"No tests specified\" && exit 0"
   },
   "keywords": [

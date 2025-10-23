@@ -1,20 +1,21 @@
 # JSAIAgent - KI-gestützter Telefonagent für Investment-Lead-Generierung
 
-Ein vollautomatischer, KI-gestützter Telefonagent für professionelle Kundengespräche zu Arbitrage- und Festgeld-Investments.
+Ein vollautomatischer, KI-gestützter Telefonagent für professionelle Outbound-Kundengespräche zu Arbitrage- und Festgeld-Investments.
 
 ## 🚀 Features
 
+- **Python-basiert** für schnellere Antworten und bessere Performance
 - **OpenAI GPT-4o-mini** für natürliche, intelligente Gesprächsführung
 - **Whisper** für hochpräzise deutsche Spracherkennung
 - **Coqui-TTS** mit Thorsten-Stimme für realistische deutsche Sprachausgabe
-- **Asterisk-Integration** über Node.js AGI Gateway
-- **Rollenbasierte Konversation** mit Investment-Expertise
+- **Asterisk-Integration** über Python AGI
+- **Optimierte Outbound-Szenarien** mit Investment-Expertise
 - **Vollautomatische Anrufbearbeitung** ohne menschliche Intervention
 
 ## 📋 Systemanforderungen
 
-- Node.js 18+ oder höher
-- Asterisk 18+ oder höher
+- Python 3.8+ oder höher
+- Asterisk 18+ oder höher (mit Ihren existierenden Konfigurationen)
 - Coqui TTS Server (lokal oder remote)
 - OpenAI API Key
 
@@ -27,10 +28,10 @@ git clone https://github.com/berndmarcel860-byte/Jsaiagent.git
 cd Jsaiagent
 ```
 
-### 2. Abhängigkeiten installieren
+### 2. Python-Abhängigkeiten installieren
 
 ```bash
-npm install
+pip install -r requirements.txt
 ```
 
 ### 3. Umgebungsvariablen konfigurieren
@@ -66,24 +67,20 @@ CALLER_EXTENSION=1000
 
 ### 4. Asterisk konfigurieren
 
-Kopieren Sie die Konfigurationsdateien aus dem `asterisk/` Verzeichnis:
+**Hinweis**: Die Asterisk-Konfigurationsdateien im `asterisk/` Verzeichnis sind nur Beispiele. 
+Wenn Sie bereits existierende Asterisk-Konfigurationen haben, können Sie diese verwenden.
 
-```bash
-# Backup der vorhandenen Konfiguration
-sudo cp /etc/asterisk/extensions.conf /etc/asterisk/extensions.conf.backup
-sudo cp /etc/asterisk/sip.conf /etc/asterisk/sip.conf.backup
-sudo cp /etc/asterisk/manager.conf /etc/asterisk/manager.conf.backup
+Fügen Sie in Ihrer Asterisk-Dialplan eine Extension hinzu, die das Python-AGI-Script aufruft:
 
-# Neue Konfiguration kopieren
-sudo cp asterisk/extensions.conf /etc/asterisk/
-sudo cp asterisk/sip.conf /etc/asterisk/
-sudo cp asterisk/manager.conf /etc/asterisk/
-
-# Asterisk neu laden
-sudo asterisk -rx "reload"
+```ini
+; In Ihrer extensions.conf
+exten => 5000,1,NoOp(AI Agent Call)
+ same => n,Answer()
+ same => n,AGI(/pfad/zu/Jsaiagent/python/agi_handler.py)
+ same => n,Hangup()
 ```
 
-**Wichtig**: Passen Sie in `asterisk/sip.conf` die IP-Adressen an Ihr Netzwerk an!
+**Optional**: Verwenden Sie die Beispiel-Konfigurationen aus dem `asterisk/` Verzeichnis als Referenz.
 
 ### 5. Coqui TTS Server installieren (optional)
 
@@ -101,18 +98,17 @@ tts-server --model_name tts_models/de/thorsten/tacotron2-DDC --port 5002
 
 ## 🎯 Verwendung
 
-### Agent starten
+### Agent testen
+
+Das Python AGI-Script wird direkt von Asterisk aufgerufen, wenn ein Anruf eingeht.
+Kein separater Server-Start erforderlich!
+
+Testen Sie mit einem Anruf auf die konfigurierte Extension (z.B. 5000):
 
 ```bash
-npm start
-```
-
-Der AGI-Server startet auf Port 4573 und wartet auf Anrufe von Asterisk.
-
-### Entwicklungsmodus mit Auto-Reload
-
-```bash
-npm run dev
+# Test via Asterisk CLI
+sudo asterisk -rvvv
+> originate SIP/1000 extension 5000@internal
 ```
 
 ### Test-Anruf durchführen
@@ -156,35 +152,50 @@ Jsaiagent/
 
 ## 🤖 Funktionsweise
 
-### Anrufablauf
+### Anrufablauf (Outbound)
 
 1. **Anruf eingehend**: Extension 1000 ruft 5000 an
-2. **Asterisk** leitet den Anruf an den AGI-Server weiter
-3. **AGI Handler** beantwortet und begrüßt den Anrufer
+2. **Asterisk** ruft Python AGI-Script auf
+3. **AGI Handler** beantwortet mit Begrüßung
 4. **Gesprächsschleife**:
    - Kundeneingabe aufnehmen (Audio)
    - Transkription mit Whisper
-   - Antwort generieren mit GPT-4o-mini
+   - Antwort generieren mit GPT-4o-mini (optimiert für schnelle Antworten)
    - Sprachsynthese mit Coqui TTS (Thorsten)
    - Antwort abspielen
 5. **Gesprächsende**: Bei Verabschiedung oder Timeout
 
-### Investment-Beratung
+### Optimierte Outbound-Gesprächsszenarien
 
-Der Agent ist spezialisiert auf:
+Der Agent ist für ausgehende Anrufe optimiert und führt professionelle Beratungsgespräche:
 
-#### Arbitrage-Investments
-- Rendite: 8-15% p.a.
-- Mittleres Risiko
-- Mindestanlage: 25.000 EUR
-- Aktives Management
-
-#### Festgeld-Anlagen
-- Rendite: 3-4% p.a.
-- Sehr niedriges Risiko
-- Laufzeiten: 1-5 Jahre
+#### Szenario 1: Festgeld-Interesse
+- Agent erklärt Festgeld-Anlagen (3-4% p.a., sehr sicher)
+- Laufzeiten: 1-5 Jahre (z.B. 3 Jahre: 3,5%)
+- Einlagensicherung bis 100.000 EUR
 - Mindestanlage: 5.000 EUR
-- Staatlich abgesichert
+- Ziel: Terminvereinbarung für detaillierte Beratung
+
+#### Szenario 2: Arbitrage-Investment
+- Agent erklärt Arbitrage-Strategie (8-15% p.a.)
+- Risikoprofil: Mittelhoch, aber kontrolliert
+- Kündigungsfrist: 3 Monate
+- Mindestanlage: 25.000 EUR
+- Qualifizierende Fragen zur Liquidität
+
+#### Szenario 3: Kombinierte Strategie
+- Agent empfiehlt ausgewogenes Portfolio
+- Beispiel: 30.000 EUR Festgeld + 20.000 EUR Arbitrage
+- Durchschnittsrendite: ~6% p.a.
+- Balance zwischen Sicherheit und Rendite
+
+### Gesprächsführung
+
+Der Agent wurde optimiert für:
+- **Kurze Antworten** (max. 2-3 Sätze) für natürlichen Gesprächsfluss
+- **Qualifizierende Fragen** zur Lead-Bewertung
+- **Terminvereinbarung** als primäres Gesprächsziel
+- **Professionelle Kommunikation** durchgehend
 
 ## 🔍 Troubleshooting
 
